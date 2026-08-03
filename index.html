@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f7f5f0">
+<title>電工暗記ドリル｜第二種電気工事士 筆記</title>
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+  :root{
+    --bg:#f7f5f0; --card:#ffffff; --ink:#333a42; --sub:#8a949e;
+    --line:#e8e4dc; --shadow:0 6px 20px rgba(120,110,90,.10);
+    --c1:#e0a416; --c2:#7b8794; --c3:#bb7a4c; --c4:#5b8fc9;
+    --ok:#1e9e5a; --ng:#e05a5a; --amber:#b9770e;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; padding:0;}
+  body{
+    font-family:"Hiragino Kaku Gothic ProN","Meiryo","Yu Gothic",sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.6;
+    max-width:560px; margin:0 auto; padding:14px 14px 40px;
+    padding-bottom:calc(40px + env(safe-area-inset-bottom));
+  }
+  h1{font-size:19px; text-align:center; margin:6px 0 2px; letter-spacing:1px;}
+  .subtitle{text-align:center; color:var(--sub); font-size:12px; margin:0 0 14px;}
+  .hide{display:none !important;}
+  button{font-family:inherit; cursor:pointer; border:none;}
+
+  /* progress ring */
+  .ringwrap{display:flex; align-items:center; gap:16px; background:var(--card);
+    border:1px solid var(--line); border-radius:18px; padding:16px; box-shadow:var(--shadow); margin-bottom:14px;}
+  .ring{position:relative; width:92px; height:92px; flex:0 0 auto;}
+  .ring svg{transform:rotate(-90deg);}
+  .ring .pct{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;}
+  .ring .pct b{font-size:22px;} .ring .pct span{font-size:10px; color:var(--sub);}
+  .rmeta{flex:1;}
+  .rmeta h2{font-size:14px; margin:0 0 4px;}
+  .rmeta p{margin:0; font-size:12px; color:var(--sub);}
+  .rmeta .weak{color:var(--ng); font-weight:700;}
+
+  /* chips */
+  .label{font-size:12px; color:var(--sub); margin:14px 2px 8px;}
+  .chips{display:flex; flex-wrap:wrap; gap:8px;}
+  .chip{background:var(--card); border:1.5px solid var(--line); color:var(--ink);
+    border-radius:999px; padding:8px 14px; font-size:13px; font-weight:600;}
+  .chip.on{color:#fff; border-color:transparent;}
+  .chip[data-c="all"].on{background:#5a6570;}
+  .chip[data-c="法令"].on{background:var(--c1);}
+  .chip[data-c="計器"].on{background:var(--c2);}
+  .chip[data-c="配線"].on{background:var(--c3);}
+  .chip[data-c="計算"].on{background:var(--c4);}
+  .cnt{opacity:.65; font-size:11px; margin-left:4px;}
+
+  /* start buttons */
+  .menu{display:grid; gap:10px; margin-top:16px;}
+  .mbtn{display:flex; align-items:center; gap:12px; text-align:left; background:var(--card);
+    border:1px solid var(--line); border-radius:16px; padding:15px 16px; box-shadow:var(--shadow); width:100%;}
+  .mbtn .emo{font-size:24px;}
+  .mbtn .t{font-size:15px; font-weight:700;}
+  .mbtn .d{font-size:11.5px; color:var(--sub);}
+  .mbtn:active{transform:scale(.98);}
+  .mbtn.review .t{color:var(--ng);}
+
+  /* top bar in study */
+  .bar{display:flex; align-items:center; gap:10px; margin-bottom:12px;}
+  .back{background:var(--card); border:1px solid var(--line); border-radius:10px; padding:7px 12px; font-size:13px;}
+  .bar .prog{flex:1; height:8px; background:#eae6de; border-radius:99px; overflow:hidden;}
+  .bar .prog i{display:block; height:100%; background:linear-gradient(90deg,#e0a416,#5b8fc9); width:0;}
+  .bar .num{font-size:12px; color:var(--sub); min-width:44px; text-align:right;}
+
+  /* flashcard */
+  .cattag{display:inline-block; font-size:11px; font-weight:700; color:#fff; padding:3px 10px; border-radius:99px; margin-bottom:10px;}
+  .tag法令{background:var(--c1);} .tag計器{background:var(--c2);} .tag配線{background:var(--c3);} .tag計算{background:var(--c4);}
+  .flash{background:var(--card); border:1px solid var(--line); border-radius:20px; box-shadow:var(--shadow);
+    min-height:270px; padding:22px; display:flex; flex-direction:column; justify-content:center;}
+  .flash .q{font-size:18px; font-weight:700; line-height:1.7;}
+  .flash .hintTap{margin-top:18px; text-align:center; color:var(--sub); font-size:12px;}
+  .flash .ans{margin-top:16px; padding-top:16px; border-top:2px dashed var(--line); font-size:16px; line-height:1.8;}
+  .flash .ans .em{color:var(--amber); font-weight:800;}
+  .flash .ans .memo{display:block; margin-top:8px; font-size:12.5px; color:var(--sub);}
+  .grade{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;}
+  .g{border-radius:14px; padding:15px; font-size:15px; font-weight:700; color:#fff;}
+  .g.no{background:var(--ng);} .g.yes{background:var(--ok);}
+  .single{display:block; width:100%; border-radius:14px; padding:15px; font-size:15px; font-weight:700;
+    color:#fff; background:#5a6570; margin-top:12px;}
+
+  /* quiz */
+  .quiz .q{font-size:17px; font-weight:700; margin-bottom:14px; line-height:1.7;}
+  .opts{display:grid; gap:10px;}
+  .opt{background:var(--card); border:1.5px solid var(--line); border-radius:14px; padding:14px 15px;
+    font-size:14.5px; text-align:left; width:100%; line-height:1.6;}
+  .opt.correct{border-color:var(--ok); background:#eafaf1;}
+  .opt.wrong{border-color:var(--ng); background:#fdeeee;}
+  .opt:disabled{opacity:1;}
+  .fb{margin-top:14px; padding:12px 14px; border-radius:12px; font-size:13.5px; line-height:1.7; display:none;}
+  .fb.show{display:block;}
+  .fb.o{background:#eafaf1; color:#1c7d48;} .fb.x{background:#fdeeee; color:#b83b3b;}
+  .fb b{color:var(--amber);}
+  .next{display:block; width:100%; margin-top:12px; border-radius:14px; padding:15px; font-size:15px;
+    font-weight:700; color:#fff; background:#5a6570;}
+
+  /* result */
+  .result{background:var(--card); border:1px solid var(--line); border-radius:20px; box-shadow:var(--shadow);
+    padding:26px 20px; text-align:center;}
+  .result .big{font-size:40px; font-weight:800; margin:6px 0;}
+  .result .msg{font-size:14px; color:var(--sub); margin-bottom:16px;}
+  .result .row{display:grid; gap:10px;}
+  .footer{text-align:center; color:var(--sub); font-size:11px; margin-top:24px; line-height:1.7;}
+  .footer a{color:var(--c4);}
+</style>
+</head>
+<body>
+
+<!-- ===== HOME ===== -->
+<section id="home">
+  <h1>⚡ 電工暗記ドリル</h1>
+  <p class="subtitle">第二種電気工事士 筆記の得点源をまるごと暗記</p>
+
+  <div class="ringwrap">
+    <div class="ring">
+      <svg width="92" height="92">
+        <circle cx="46" cy="46" r="40" fill="none" stroke="#eae6de" stroke-width="10"/>
+        <circle id="ringFg" cx="46" cy="46" r="40" fill="none" stroke="#e0a416" stroke-width="10"
+                stroke-linecap="round" stroke-dasharray="251" stroke-dashoffset="251"/>
+      </svg>
+      <div class="pct"><b id="pctNum">0%</b><span>覚えた</span></div>
+    </div>
+    <div class="rmeta">
+      <h2 id="masterLine">0 / 0 問マスター</h2>
+      <p id="weakLine">苦手マーク：0問</p>
+      <p style="margin-top:6px;">毎日ちょっとずつ、すきま時間で💪</p>
+    </div>
+  </div>
+
+  <div class="label">▼ 分野をえらぶ</div>
+  <div class="chips" id="chips">
+    <button class="chip on" data-c="all">全部<span class="cnt"></span></button>
+    <button class="chip" data-c="法令">法令<span class="cnt"></span></button>
+    <button class="chip" data-c="計器">計器<span class="cnt"></span></button>
+    <button class="chip" data-c="配線">配線<span class="cnt"></span></button>
+    <button class="chip" data-c="計算">計算<span class="cnt"></span></button>
+  </div>
+
+  <div class="menu">
+    <button class="mbtn" onclick="startCards()">
+      <span class="emo">🃏</span>
+      <span><span class="t">カードで覚える</span><br><span class="d">一問一答。タップで答えを確認、覚えた／苦手で仕分け</span></span>
+    </button>
+    <button class="mbtn" onclick="startQuiz()">
+      <span class="emo">✍️</span>
+      <span><span class="t">クイズで力だめし</span><br><span class="d">4択問題。まちがえた所は自動で苦手に登録</span></span>
+    </button>
+    <button class="mbtn review" onclick="startReview()">
+      <span class="emo">🔥</span>
+      <span><span class="t">苦手だけ復習</span><br><span class="d" id="reviewD">苦手マークした問題をカードで集中特訓</span></span>
+    </button>
+  </div>
+
+  <p class="footer">
+    収録：法令・計器・配線・計算の得点源 全<span id="totalN">0</span>問<br>
+    データは端末内に保存されます（進捗・苦手）<br>
+    <a href="#" onclick="resetAll();return false;">進捗をリセット</a>
+  </p>
+</section>
+
+<!-- ===== CARDS ===== -->
+<section id="cards" class="hide">
+  <div class="bar">
+    <button class="back" onclick="goHome()">← ホーム</button>
+    <div class="prog"><i id="cProg"></i></div>
+    <div class="num" id="cNum">0/0</div>
+  </div>
+  <div id="cardArea"></div>
+</section>
+
+<!-- ===== QUIZ ===== -->
+<section id="quiz" class="hide">
+  <div class="bar">
+    <button class="back" onclick="goHome()">← ホーム</button>
+    <div class="prog"><i id="qProg"></i></div>
+    <div class="num" id="qNum">0/0</div>
+  </div>
+  <div id="quizArea" class="quiz"></div>
+</section>
+
+<!-- ===== RESULT ===== -->
+<section id="result" class="hide">
+  <div class="result">
+    <div style="font-size:34px" id="rEmoji">🎉</div>
+    <div class="big" id="rScore">0/0</div>
+    <div class="msg" id="rMsg"></div>
+    <div class="row">
+      <button class="single" style="background:var(--c4)" onclick="location.reload()">もう一度</button>
+      <button class="single" onclick="goHome()">ホームへ</button>
+    </div>
+  </div>
+</section>
+
+<script>
+/* ============ 問題データ ============ */
+const DATA = [
+  // ---- 法令 ----
+  {c:"法令", q:"電気工事士の<b>資格が必要</b>な作業は？（3つ）", a:'電線管を曲げる／<span class="em">電線相互の接続</span>／配電盤を壁に取り付ける',
+   choices:["電力量計（メーター）の取り付け","電線相互の接続","地中に管を埋める（土木作業）","柱を立てる"], correct:1,
+   memo:"「つなぐ・曲げる・盤を付ける」は資格いる"},
+  {c:"法令", q:"<b>無資格でOK</b>（軽微な作業）はどれ？", a:'<span class="em">電力量計の取付け</span>／差込接続器へコードをねじ止め／柱を立てる／地中に管を埋める',
+   choices:["電線管を曲げる","配電盤を壁に取り付ける","電力量計（メーター）の取り付け","低圧電線相互の接続"], correct:2,
+   memo:"メーター・ねじ止め・土木はOK"},
+  {c:"法令", q:"<b>特定電気用品</b>（危険度が高い）のマークの形は？", a:'ひし形 <span class="em">&lt;PS&gt;E</span>',
+   choices:["丸形 (PS)E","ひし形 <PS>E","三角形","四角形"], correct:1,
+   memo:"危険＝とがったひし形"},
+  {c:"法令", q:"<b>特定電気用品</b>の例は？", a:'漏電遮断器・<span class="em">配線用遮断器</span>・ケーブル・リモコンリレー',
+   choices:["換気扇","蛍光ランプ","配線用遮断器・漏電遮断器・ケーブル","電線管"], correct:2,
+   memo:"遮断器とケーブルは特定"},
+  {c:"法令", q:"<b>特定以外</b>の電気用品のマークの形は？", a:'丸形 <span class="em">(PS)E</span>',
+   choices:["ひし形 <PS>E","丸形 (PS)E","星形","六角形"], correct:1,
+   memo:"ふつう＝まるい丸形"},
+  {c:"法令", q:"<b>特定以外</b>の電気用品の例は？", a:'<span class="em">換気扇</span>・蛍光ランプ・電線管・ライティングダクト・差込接続器',
+   choices:["ケーブル","漏電遮断器","換気扇・蛍光ランプ・電線管","配線用遮断器"], correct:2,
+   memo:"換気扇・ダクト系は特定以外"},
+  {c:"法令", q:"<b>低圧</b>の定義は？（直流・交流）", a:'直流 <span class="em">750V以下</span>・交流 <span class="em">600V以下</span>',
+   choices:["直流600V以下・交流750V以下","直流750V以下・交流600V以下","直流100V・交流200V","直流・交流とも600V以下"], correct:1,
+   memo:"直流ナ(7)コ(5)・交流ロ(6)ク…「直7交6」"},
+  {c:"法令", q:"<b>一般用電気工作物</b>の定義は？", a:'<span class="em">低圧(600V以下)</span>で受電し、同一構内で使用するもの（小出力発電＝太陽光等も含む）',
+   choices:["高圧6600Vで受電するもの","低圧600V以下で受電し同一構内で使うもの","特別高圧のもの","発電所のこと"], correct:1,
+   memo:"600V以下受電＋同一構内"},
+  {c:"法令", q:"電路で<b>地絡（漏電）</b>が生じたときに施設するものは？", a:'<span class="em">地絡遮断器</span>（過電流には過電流遮断器）',
+   choices:["過電流遮断器","地絡遮断器","開閉器","避雷器"], correct:1,
+   memo:"地絡→地絡遮断器／過電流→過電流遮断器"},
+  {c:"法令", q:"保安の原則。電気設備は「感電・火災その他、人体に危害／物件に○○を与えるおそれがないように施設する」。○○は？", a:'<span class="em">損傷</span>',
+   choices:["利益","損傷","影響","変化"], correct:1,
+   memo:"人体に危害・物件に損傷"},
+
+  // ---- 計器 ----
+  {c:"計器", q:"<b>永久磁石可動コイル形</b>（馬蹄形マーク）は何用？", a:'<span class="em">直流用（ー）</span>',
+   choices:["交流用（〜）","直流用（ー）","直流・交流両用","高周波用"], correct:1,
+   memo:"コイル形＝直流"},
+  {c:"計器", q:"<b>可動鉄片形</b>は何用？", a:'<span class="em">交流用（〜）</span>',
+   choices:["直流用（ー）","交流用（〜）","直流専用","計測不可"], correct:1,
+   memo:"鉄片形＝交流"},
+  {c:"計器", q:"計器の姿勢記号「⊥（鉛直線）」の意味は？", a:'計器を <span class="em">鉛直に立てて</span>使う',
+   choices:["水平に置く","鉛直に立てる","傾けて置く","向きは自由"], correct:1,
+   memo:"⎓＝水平／⊥＝鉛直"},
+  {c:"計器", q:"<b>接地抵抗計</b>（電池式）で測定前にすることは？", a:'電池が有効か確認 → 端子を<span class="em">開放</span>してゼロ点調整',
+   choices:["端子を短絡して調整","端子を開放してゼロ点調整","そのまま測る","抵抗をつないで調整"], correct:1,
+   memo:"接地は「開放」でゼロ点"},
+  {c:"計器", q:"<b>接地抵抗計</b>の電極の配置は？", a:'被測定極 <span class="em">E→補助極P→補助極C</span> の順に、約10mずつ一直線に離す',
+   choices:["円形に配置","E→P→Cの順に約10mずつ一直線","バラバラでよい","2mずつ配置"], correct:1,
+   memo:"E-P-C を10mずつ直線に"},
+  {c:"計器", q:"<b>絶縁抵抗計</b>で測定前にすることは？", a:'電池を確認 → E端子とL端子を<span class="em">短絡</span>して零点を指示するか確認',
+   choices:["端子を開放して確認","E端子とL端子を短絡して確認","そのまま測定","接地して確認"], correct:1,
+   memo:"絶縁は「短絡」で零点（接地とは逆！）"},
+  {c:"計器", q:"<b>クランプ形漏れ電流計</b>で単相3線式を測るときは？", a:'<span class="em">3本の電線（中性線を含む）をすべて一緒にクランプ</span>して測定',
+   choices:["1本ずつクランプ","電圧線2本だけをクランプ","中性線を含む3本を一緒にクランプ","接地線をクランプ"], correct:2,
+   memo:"全部まとめて挟む＝漏れ分だけ出る"},
+
+  // ---- 配線 ----
+  {c:"配線", q:"<b>D種接地工事</b>の抵抗値は原則何Ω以下？", a:'原則 <span class="em">100Ω以下</span>（0.5秒以内動作の漏電遮断器があれば500Ω以下に緩和）',
+   choices:["10Ω以下","100Ω以下","500Ω以下","1000Ω以下"], correct:1,
+   memo:"D種＝100（緩和で500）"},
+  {c:"配線", q:"D種接地の緩和。<b>0.5秒以内</b>に動作する漏電遮断器があれば何Ω以下でよい？", a:'<span class="em">500Ω以下</span>',
+   choices:["50Ω以下","100Ω以下","500Ω以下","制限なし"], correct:2,
+   memo:"0.5秒→500Ω（ゴーゴー）"},
+  {c:"配線", q:"<b>C種接地工事</b>（使用電圧300V超）の抵抗値は原則何Ω以下？", a:'原則 <span class="em">10Ω以下</span>',
+   choices:["10Ω以下","100Ω以下","500Ω以下","0.4Ω以下"], correct:0,
+   memo:"C種＝10（きびしい）"},
+  {c:"配線", q:"使用電圧300V超の<b>絶縁抵抗</b>は何MΩ以上？", a:'<span class="em">0.4MΩ以上</span>',
+   choices:["0.1MΩ以上","0.2MΩ以上","0.4MΩ以上","1.0MΩ以上"], correct:2,
+   memo:"300V超は0.4MΩ"},
+  {c:"配線", q:"<b>20A</b>配線用遮断器の分岐回路。電線の太さとコンセントは？", a:'電線 <span class="em">1.6mm以上</span>／コンセント 15A・20A',
+   choices:["1.6mm以上／15A・20A","2.0mm以上／20A","2.6mm以上／30A","1.2mm以上／15A"], correct:0,
+   memo:"20A→1.6mm→15/20A"},
+  {c:"配線", q:"<b>30A</b>配線用遮断器の分岐回路。電線の太さとコンセントは？", a:'電線 <span class="em">2.6mm以上</span>／コンセント 20A・30A',
+   choices:["1.6mm以上／15A","2.0mm以上／20A","2.6mm以上／20A・30A","3.2mm以上／40A"], correct:2,
+   memo:"30A→2.6mm→20/30A"},
+  {c:"配線", q:"幹線の分岐。分岐点から過電流遮断器まで<b>3m以下</b>なら電線の太さは？", a:'<span class="em">制限なし</span>',
+   choices:["制限なし","35%以上","55%以上","100%必要"], correct:0,
+   memo:"3m以下は自由"},
+  {c:"配線", q:"幹線の分岐。<b>8m以下</b>なら幹線遮断器の何%以上の許容電流が必要？", a:'<span class="em">35%以上</span>',
+   choices:["20%以上","35%以上","55%以上","100%以上"], correct:1,
+   memo:"8m以下→35%（ミゴ）"},
+  {c:"配線", q:"幹線の分岐。<b>8m超え</b>なら幹線遮断器の何%以上の許容電流が必要？", a:'<span class="em">55%以上</span>',
+   choices:["35%以上","45%以上","55%以上","75%以上"], correct:2,
+   memo:"8m超→55%（ゴーゴー）"},
+  {c:"配線", q:"電線を<b>管に複数収める</b>場合の許容電流の求め方は？", a:'許容電流 ＝ <span class="em">基底許容電流 × 電流減少係数</span>',
+   choices:["基底許容電流 ＋ 電流減少係数","基底許容電流 × 電流減少係数","基底許容電流 ÷ 本数","電圧 × 電流"], correct:1,
+   memo:"束ねると熱い→係数で減らす"},
+
+  // ---- 計算 ----
+  {c:"計算", q:"抵抗の<b>直列</b>接続の合成抵抗は？", a:'そのまま足す　<span class="em">R ＝ R₁ ＋ R₂</span>',
+   choices:["和分の積","そのまま足す（R₁+R₂）","かけ算だけ","平均をとる"], correct:1,
+   memo:"直列＝足すだけ"},
+  {c:"計算", q:"抵抗の<b>並列</b>接続の合成抵抗は？（2本）", a:'和分の積　<span class="em">R ＝ (R₁×R₂)/(R₁＋R₂)</span>',
+   choices:["R₁＋R₂","(R₁×R₂)/(R₁＋R₂)","R₁×R₂","(R₁＋R₂)/2"], correct:1,
+   memo:"並列＝和分の積"},
+  {c:"計算", q:"<b>導線の電気抵抗</b>は長さと太さにどう関係する？", a:'長さLに<span class="em">比例</span>・直径Dの2乗に<span class="em">反比例</span>（R=ρ4L/πD²）',
+   choices:["長さに反比例・太さに比例","長さに比例・直径の2乗に反比例","長さも太さも無関係","長さの2乗に比例"], correct:1,
+   memo:"長いほど大・太いほど小"},
+  {c:"計算", q:"<b>ジュールの法則</b>（発熱量H）の公式は？", a:'<span class="em">H ＝ I²×R×t</span>［J］（tは必ず「秒」・kJは÷1000）',
+   choices:["H＝I×R×t","H＝I²×R×t","H＝V×I","H＝R×t"], correct:1,
+   memo:"電流の2乗×抵抗×秒"},
+  {c:"計算", q:"<b>電圧降下</b>（単相2線式）の公式は？", a:'<span class="em">Vd ＝ 2×r×I</span>（r:1線の抵抗、I:電流）',
+   choices:["Vd＝r×I","Vd＝2×r×I","Vd＝√3×r×I","Vd＝r×I²"], correct:1,
+   memo:"行き帰りで2倍"},
+  {c:"計算", q:"三相誘導電動機の<b>同期速度Ns</b>の公式は？", a:'<span class="em">Ns ＝ 120f / p</span>（f:周波数、p:極数）',
+   choices:["Ns＝120p/f","Ns＝120f/p","Ns＝60f/p","Ns＝f×p"], correct:1,
+   memo:"120×周波数÷極数"},
+  {c:"計算", q:"三相・<b>Y（スター）結線</b>の正常時の線電流は？", a:'<span class="em">I ＝ E / (√3×R)</span>',
+   choices:["I＝√3×E/R","I＝E/(√3×R)","I＝E/R","I＝E/2R"], correct:1,
+   memo:"Yは√3で割る"},
+  {c:"計算", q:"三相・<b>Δ（デルタ）結線</b>の正常時の線電流は？", a:'<span class="em">I ＝ √3×E / R</span>',
+   choices:["I＝E/(√3×R)","I＝√3×E/R","I＝E/R","I＝E/2R"], correct:1,
+   memo:"Δは√3を掛ける"},
+  {c:"計算", q:"<b>Y結線が1線断線</b>したときの電流は？（残り2抵抗が直列2R）", a:'<span class="em">I ＝ E / 2R</span>',
+   choices:["I＝E/R","I＝E/2R","I＝2E/R","I＝E/(√3R)"], correct:1,
+   memo:"直列2Rになる"},
+  {c:"計算", q:"<b>Δ結線が1線断線</b>。直接つながる側（抵抗R）に流れる電流は？", a:'<span class="em">I ＝ E / R</span>（遠回り側の2Rには E/2R）',
+   choices:["I＝E/2R","I＝E/R","I＝√3E/R","I＝2E/R"], correct:1,
+   memo:"直接R側＝E/R、遠回り2R側＝E/2R"},
+  {c:"計算", q:"<b>Δ結線1線断線</b>時の合成抵抗R′は？（Rと2Rの並列）", a:'和分の積で <span class="em">R′ ＝ 2R/3</span>',
+   choices:["3R/2","2R/3","3R","R/2"], correct:1,
+   memo:"(R×2R)/(R+2R)=2R/3"},
+  {c:"計算", q:"合成抵抗R′がわかったとき、全消費電力Pの求め方は？", a:'<span class="em">P ＝ V² / R′</span>',
+   choices:["P＝I²×R′","P＝V²/R′","P＝V×R′","P＝V/R′"], correct:1,
+   memo:"電圧の2乗÷合成抵抗"},
+  {c:"計算", q:"三相回路の<b>力率</b>［%］の公式は？", a:'<span class="em">力率 ＝ P / (√3×V×I) × 100</span>',
+   choices:["P/(V×I)×100","P/(√3×V×I)×100","(√3×V×I)/P×100","V×I/P"], correct:1,
+   memo:"三相は√3が入る"},
+];
+
+/* ============ 状態 ============ */
+const KEY="denki_anki_v1";
+let store = JSON.parse(localStorage.getItem(KEY) || '{"mastered":[],"weak":[]}');
+function save(){ localStorage.setItem(KEY, JSON.stringify(store)); }
+function idOf(item){ return item.c + "|" + item.q; }
+let curCat = "all";
+const CAT_COLOR = {法令:"var(--c1)",計器:"var(--c2)",配線:"var(--c3)",計算:"var(--c4)"};
+
+/* ============ ホーム描画 ============ */
+function renderHome(){
+  // chip counts
+  document.querySelectorAll('.chip').forEach(ch=>{
+    const c = ch.dataset.c;
+    const n = c==="all" ? DATA.length : DATA.filter(d=>d.c===c).length;
+    ch.querySelector('.cnt').textContent = "("+n+")";
+    ch.classList.toggle('on', c===curCat);
+  });
+  const total = DATA.length;
+  const mastered = store.mastered.length;
+  const pct = total? Math.round(mastered/total*100):0;
+  document.getElementById('pctNum').textContent = pct+"%";
+  document.getElementById('masterLine').textContent = mastered+" / "+total+" 問マスター";
+  document.getElementById('weakLine').innerHTML = '苦手マーク：<span class="weak">'+store.weak.length+'問</span>';
+  document.getElementById('totalN').textContent = total;
+  const off = 251 - 251*pct/100;
+  document.getElementById('ringFg').style.strokeDashoffset = off;
+  document.getElementById('reviewD').textContent = store.weak.length
+    ? "苦手マークした "+store.weak.length+" 問を集中特訓" : "まずはカードやクイズで苦手を見つけよう";
+}
+
+document.getElementById('chips').addEventListener('click', e=>{
+  const ch = e.target.closest('.chip'); if(!ch) return;
+  curCat = ch.dataset.c; renderHome();
+});
+
+function poolByCat(){
+  return curCat==="all" ? DATA.slice() : DATA.filter(d=>d.c===curCat);
+}
+function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];} return a; }
+function show(id){ ['home','cards','quiz','result'].forEach(s=>document.getElementById(s).classList.toggle('hide', s!==id)); window.scrollTo(0,0); }
+function goHome(){ renderHome(); show('home'); }
+
+/* ============ カードモード ============ */
+let cList=[], cIdx=0, flipped=false;
+function startCards(){ cList = shuffle(poolByCat()); cIdx=0; if(!cList.length) return; show('cards'); renderCard(); }
+function startReview(){
+  const weakItems = DATA.filter(d=> store.weak.includes(idOf(d)));
+  if(!weakItems.length){ alert("苦手マークはまだありません。カードやクイズで見つけましょう！"); return; }
+  cList = shuffle(weakItems); cIdx=0; show('cards'); renderCard();
+}
+function renderCard(){
+  flipped=false;
+  const it = cList[cIdx];
+  document.getElementById('cNum').textContent = (cIdx+1)+"/"+cList.length;
+  document.getElementById('cProg').style.width = ((cIdx)/cList.length*100)+"%";
+  const isWeak = store.weak.includes(idOf(it));
+  const isMas = store.mastered.includes(idOf(it));
+  document.getElementById('cardArea').innerHTML = `
+    <span class="cattag tag${it.c}">${it.c}</span>
+    ${isWeak?'<span class="cattag" style="background:var(--ng)">苦手</span>':''}
+    ${isMas?'<span class="cattag" style="background:var(--ok)">覚えた</span>':''}
+    <div class="flash" id="flash" onclick="flip()">
+      <div class="q">${it.q}</div>
+      <div class="hintTap" id="tapHint">タップで答えを見る 👆</div>
+      <div class="ans hide" id="ans">${it.a}<span class="memo">💡 ${it.memo||""}</span></div>
+    </div>
+    <div id="gradeWrap"></div>`;
+}
+function flip(){
+  if(flipped) return; flipped=true;
+  document.getElementById('ans').classList.remove('hide');
+  document.getElementById('tapHint').classList.add('hide');
+  document.getElementById('gradeWrap').innerHTML = `
+    <div class="grade">
+      <button class="g no" onclick="gradeCard(false)">まだ苦手 🔥</button>
+      <button class="g yes" onclick="gradeCard(true)">覚えた ✓</button>
+    </div>`;
+}
+function gradeCard(ok){
+  const it = cList[cIdx]; const id = idOf(it);
+  store.weak = store.weak.filter(x=>x!==id);
+  store.mastered = store.mastered.filter(x=>x!==id);
+  if(ok) store.mastered.push(id); else store.weak.push(id);
+  save();
+  cIdx++;
+  if(cIdx>=cList.length){ finishCards(); } else { renderCard(); }
+}
+function finishCards(){
+  document.getElementById('cProg').style.width="100%";
+  const learned = cList.filter(it=>store.mastered.includes(idOf(it))).length;
+  document.getElementById('rEmoji').textContent = "🃏";
+  document.getElementById('rScore').textContent = learned+"/"+cList.length;
+  document.getElementById('rMsg').textContent = "このセットで「覚えた」"+learned+"問！ 苦手は復習でくり返そう。";
+  show('result');
+}
+
+/* ============ クイズモード ============ */
+let qList=[], qIdx=0, qScore=0;
+function startQuiz(){
+  qList = shuffle(poolByCat()).filter(d=>d.choices); qIdx=0; qScore=0;
+  if(!qList.length){ alert("この分野にクイズはありません"); return; }
+  show('quiz'); renderQuiz();
+}
+function renderQuiz(){
+  const it = qList[qIdx];
+  document.getElementById('qNum').textContent = (qIdx+1)+"/"+qList.length;
+  document.getElementById('qProg').style.width = ((qIdx)/qList.length*100)+"%";
+  // build shuffled options keeping track of correct
+  const opts = it.choices.map((t,i)=>({t, ok:i===it.correct}));
+  shuffle(opts);
+  let html = `<span class="cattag tag${it.c}">${it.c}</span>
+    <div class="q">${it.q}</div><div class="opts">`;
+  opts.forEach((o,i)=>{ html += `<button class="opt" onclick="answer(this,${o.ok})">${o.t}</button>`; });
+  html += `</div><div class="fb" id="fb"></div><button class="next hide" id="nextBtn" onclick="nextQuiz()">次へ →</button>`;
+  document.getElementById('quizArea').innerHTML = html;
+}
+function answer(btn, ok){
+  const it = qList[qIdx]; const id = idOf(it);
+  document.querySelectorAll('.opt').forEach(b=>{
+    b.disabled=true;
+    const correct = b.getAttribute('onclick').includes('true');
+    if(correct) b.classList.add('correct');
+  });
+  const fb = document.getElementById('fb');
+  if(ok){
+    qScore++; btn.classList.add('correct');
+    fb.className="fb show o"; fb.innerHTML = "⭕ 正解！ <b>"+stripEm(it.a)+"</b><br>💡 "+(it.memo||"");
+    // 正解したら苦手から外す
+    store.weak = store.weak.filter(x=>x!==id);
+    if(!store.mastered.includes(id)) store.mastered.push(id);
+  }else{
+    btn.classList.add('wrong');
+    fb.className="fb show x"; fb.innerHTML = "❌ 正解は <b>"+stripEm(it.a)+"</b><br>💡 "+(it.memo||"");
+    // まちがえたら苦手に登録
+    store.mastered = store.mastered.filter(x=>x!==id);
+    if(!store.weak.includes(id)) store.weak.push(id);
+  }
+  save();
+  document.getElementById('nextBtn').classList.remove('hide');
+}
+function stripEm(s){ return s.replace(/<[^>]+>/g,''); }
+function nextQuiz(){
+  qIdx++;
+  if(qIdx>=qList.length){ finishQuiz(); } else { renderQuiz(); }
+}
+function finishQuiz(){
+  document.getElementById('qProg').style.width="100%";
+  const pct = Math.round(qScore/qList.length*100);
+  document.getElementById('rEmoji').textContent = pct>=80?"🎉":pct>=50?"👍":"💪";
+  document.getElementById('rScore').textContent = qScore+"/"+qList.length;
+  document.getElementById('rMsg').textContent = pct>=80?"すばらしい！この分野はバッチリ🎉"
+    : pct>=50?"いい調子！まちがえた所は苦手復習で仕上げよう。" : "まちがえた所は苦手に登録済み。復習でくり返そう🔥";
+  show('result');
+}
+
+/* ============ リセット ============ */
+function resetAll(){
+  if(confirm("進捗（覚えた・苦手）をすべて消しますか？")){
+    store={mastered:[],weak:[]}; save(); renderHome();
+  }
+}
+
+renderHome();
+
+/* PWA: service worker */
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
+</script>
+</body>
+</html>
