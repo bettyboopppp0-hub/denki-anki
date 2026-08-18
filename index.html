@@ -11,6 +11,7 @@
     --bg:#f7f5f0; --card:#ffffff; --ink:#333a42; --sub:#8a949e;
     --line:#e8e4dc; --shadow:0 6px 20px rgba(120,110,90,.10);
     --c1:#e0a416; --c2:#7b8794; --c3:#bb7a4c; --c4:#5b8fc9;
+    --c5:#9b7bb8; --c6:#5fa07a; --c7:#d0776f;
     --ok:#1e9e5a; --ng:#e05a5a; --amber:#b9770e;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
@@ -49,6 +50,9 @@
   .chip[data-c="計器"].on{background:var(--c2);}
   .chip[data-c="配線"].on{background:var(--c3);}
   .chip[data-c="計算"].on{background:var(--c4);}
+  .chip[data-c="鑑別"].on{background:var(--c5);}
+  .chip[data-c="施工"].on{background:var(--c6);}
+  .chip[data-c="工具"].on{background:var(--c7);}
   .cnt{opacity:.65; font-size:11px; margin-left:4px;}
 
   /* start buttons */
@@ -71,6 +75,7 @@
   /* flashcard */
   .cattag{display:inline-block; font-size:11px; font-weight:700; color:#fff; padding:3px 10px; border-radius:99px; margin-bottom:10px;}
   .tag法令{background:var(--c1);} .tag計器{background:var(--c2);} .tag配線{background:var(--c3);} .tag計算{background:var(--c4);}
+  .tag鑑別{background:var(--c5);} .tag施工{background:var(--c6);} .tag工具{background:var(--c7);}
   .flash{background:var(--card); border:1px solid var(--line); border-radius:20px; box-shadow:var(--shadow);
     min-height:270px; padding:22px; display:flex; flex-direction:column; justify-content:center;}
   .flash .q{font-size:18px; font-weight:700; line-height:1.7;}
@@ -107,6 +112,51 @@
   .result .row{display:grid; gap:10px;}
   .footer{text-align:center; color:var(--sub); font-size:11px; margin-top:24px; line-height:1.7;}
   .footer a{color:var(--c4);}
+
+  /* ===== 印刷シート ===== */
+  .ptools{background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:12px; box-shadow:var(--shadow); margin-bottom:14px;}
+  .ptools .back{margin-bottom:10px;}
+  .pmode{display:flex; gap:8px; margin-bottom:10px;}
+  .pm{flex:1; background:#fff; border:1.5px solid var(--line); color:var(--ink);
+    border-radius:10px; padding:10px 6px; font-size:13px; font-weight:700;}
+  .pm.on{background:#5a6570; color:#fff; border-color:transparent;}
+  .pweak{display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--sub); margin-bottom:10px;}
+  .pbtn{width:100%; background:var(--c1); color:#fff; border-radius:12px; padding:13px; font-size:15px; font-weight:700;}
+  .phint{font-size:11px; color:var(--sub); margin:8px 0 0; line-height:1.5;}
+
+  .sheet{background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px;}
+  .sheetHead{border-bottom:2px solid #333a42; padding-bottom:6px; margin-bottom:10px;}
+  .sheetHead h3{margin:0; font-size:14px;}
+  .sheetHead .meta{font-size:10.5px; color:var(--sub); margin-top:3px; display:flex; justify-content:space-between; gap:8px;}
+  .pcat{font-size:11.5px; font-weight:700; margin:10px 0 5px; padding:2px 8px;
+    border-left:4px solid #999; background:#f3f1ec; border-radius:0 6px 6px 0; break-after:avoid;}
+  .pitem{font-size:11.5px; line-height:1.65; margin-bottom:7px; padding-bottom:6px;
+    border-bottom:1px dotted #ddd6c8; break-inside:avoid;}
+  .pitem .pq{font-weight:700;}
+  .pitem .pq i{font-style:normal; color:#8a949e; margin-right:3px;}
+  .pitem .pa{margin-top:2px;}
+  .pitem .pa:before{content:"→ "; color:#8a949e;}
+  .pitem .pm2{font-size:10.5px; color:#8a949e;}
+  .pitem .em{background:#fff6d8; font-weight:700; padding:0 2px;}
+  .bl{display:inline-block; min-width:4em; border-bottom:1.3px solid #333a42;
+    vertical-align:baseline; height:1.15em;}
+
+  @page{ size:A4 portrait; margin:11mm 10mm; }
+  @media print{
+    html,body{background:#fff !important;}
+    body{max-width:none; margin:0; padding:0; font-size:10pt;
+      -webkit-print-color-adjust:exact; print-color-adjust:exact;}
+    body > section:not(#print){display:none !important;}
+    #print{display:block !important;}
+    .ptools{display:none !important;}
+    .sheet{border:none; border-radius:0; padding:0; columns:2; column-gap:7mm;}
+    .sheetHead{column-span:all;}
+    .pitem{font-size:8.6pt; line-height:1.55; margin-bottom:5px;}
+    .pitem .pm2{font-size:7.8pt;}
+    .pcat{font-size:9pt;}
+    a{text-decoration:none; color:inherit;}
+  }
 </style>
 </head>
 <body>
@@ -139,6 +189,9 @@
     <button class="chip" data-c="計器">計器<span class="cnt"></span></button>
     <button class="chip" data-c="配線">配線<span class="cnt"></span></button>
     <button class="chip" data-c="計算">計算<span class="cnt"></span></button>
+    <button class="chip" data-c="鑑別">鑑別<span class="cnt"></span></button>
+    <button class="chip" data-c="施工">施工<span class="cnt"></span></button>
+    <button class="chip" data-c="工具">工具<span class="cnt"></span></button>
   </div>
 
   <div class="menu">
@@ -154,10 +207,14 @@
       <span class="emo">🔥</span>
       <span><span class="t">苦手だけ復習</span><br><span class="d" id="reviewD">苦手マークした問題をカードで集中特訓</span></span>
     </button>
+    <button class="mbtn" onclick="openPrint()">
+      <span class="emo">🖨️</span>
+      <span><span class="t">印刷してA4に</span><br><span class="d">暗記用（答えあり）と勉強用（空欄）の2種類を印刷</span></span>
+    </button>
   </div>
 
   <p class="footer">
-    収録：法令・計器・配線・計算の得点源 全<span id="totalN">0</span>問<br>
+    収録：法令・計器・配線・計算・鑑別・施工・工具の得点源 全<span id="totalN">0</span>問<br>
     データは端末内に保存されます（進捗・苦手）<br>
     <a href="#" onclick="resetAll();return false;">進捗をリセット</a>
   </p>
@@ -194,6 +251,27 @@
       <button class="single" onclick="goHome()">ホームへ</button>
     </div>
   </div>
+</section>
+
+
+<!-- ===== PRINT ===== -->
+<section id="print" class="hide">
+  <div class="ptools">
+    <button class="back" onclick="goHome()">← ホーム</button>
+    <div class="pmode">
+      <button class="pm on" id="pmA" onclick="setPMode('ans')">📖 暗記用<br><small>答えぜんぶ載せ</small></button>
+      <button class="pm" id="pmB" onclick="setPMode('blank')">✏️ 勉強用<br><small>大事な所が空欄</small></button>
+    </div>
+    <label class="pweak"><input type="checkbox" id="pWeak" onchange="renderSheet()"> 苦手マークした問題だけ印刷する</label>
+    <label class="pweak" id="pHintWrap"><input type="checkbox" id="pHint" onchange="renderSheet()"> ヒント（💡ゴロあわせ）も隠す ※勉強用のみ</label>
+    <button class="pbtn" onclick="window.print()">🖨️ この内容をA4で印刷</button>
+    <p class="phint">
+      ・PC：Ctrl+P → 用紙「A4」・余白「標準」・「背景のグラフィック」ONで色付き<br>
+      ・スマホ：共有 → プリント（PDFで保存もできます）<br>
+      ・勉強用と暗記用は同じ番号順なので、暗記用がそのまま答え合わせ用になります。
+    </p>
+  </div>
+  <div id="sheet" class="sheet"></div>
 </section>
 
 <script>
@@ -326,6 +404,222 @@ const DATA = [
   {c:"計算", q:"三相回路の<b>力率</b>［%］の公式は？", a:'<span class="em">力率 ＝ P / (√3×V×I) × 100</span>',
    choices:["P/(V×I)×100","P/(√3×V×I)×100","(√3×V×I)/P×100","V×I/P"], correct:1,
    memo:"三相は√3が入る"},
+
+  // ---- 法令（追加） ----
+  {c:"法令", q:"電気工事士が作業に従事するとき、必ず<b>携帯</b>するものは？", a:'<span class="em">電気工事士免状</span>（作業中は必ず携帯）',
+   choices:["住民票の写し","電気工事士免状","健康保険証","講習の受講票"], correct:1,
+   memo:"免状は「持ち歩く」まで義務"},
+  {c:"法令", q:"第二種電気工事士が<b>できない</b>工事は？", a:'自家用電気工作物の工事／<span class="em">ネオン工事</span>／非常用予備発電装置の工事',
+   choices:["一般住宅の屋内配線","ネオン工事","一般住宅のコンセント増設","一般住宅の分電盤の取付け"], correct:1,
+   memo:"ネオン・非常用発電・自家用は2種の範囲外"},
+  {c:"法令", q:"PSEマークが<b>表示されていない</b>電気用品はどうする？", a:'電気工事に <span class="em">使用してはならない</span>（電気用品安全法）',
+   choices:["自己責任で使ってよい","使用してはならない","仮設なら使ってよい","屋外だけ使える"], correct:1,
+   memo:"マーク無しは使わない"},
+  {c:"法令", q:"<b>資格が不要</b>な作業。定格何V以下のコンセント等へのコード接続なら無資格でよい？", a:'定格 <span class="em">125V以下</span>の差込接続器・ソケット等へのコード接続',
+   choices:["100V以下","125V以下","150V以下","200V以下"], correct:1,
+   memo:"125Vまではコード接続OK"},
+  {c:"法令", q:"<b>特定電気用品</b>に入るのはどれ？", a:'<span class="em">タイムスイッチ</span>（ほかに遮断器・ケーブル・ヒューズ）',
+   choices:["換気扇","タイムスイッチ","蛍光ランプ","電動機"], correct:1,
+   memo:"タイムスイッチはひし形（特定）"},
+
+  // ---- 計器（検査・測定） ----
+  {c:"計器", q:"<b>対地電圧150V以下</b>の電路（100V回路）の絶縁抵抗は何MΩ以上？", a:'<span class="em">0.1MΩ以上</span>',
+   choices:["0.1MΩ以上","0.2MΩ以上","0.3MΩ以上","0.4MΩ以上"], correct:0,
+   memo:"100Vのおうち回路＝0.1"},
+  {c:"計器", q:"使用電圧<b>150V超〜300V以下</b>（三相200V等）の絶縁抵抗は？", a:'<span class="em">0.2MΩ以上</span>',
+   choices:["0.1MΩ以上","0.2MΩ以上","0.4MΩ以上","1.0MΩ以上"], correct:1,
+   memo:"0.1 → 0.2 → 0.4 の順で覚える"},
+  {c:"計器", q:"絶縁抵抗の測定が<b>困難</b>なとき、漏えい電流を何mA以下に保てばよい？", a:'<span class="em">1mA以下</span>（クランプ形漏れ電流計で確認）',
+   choices:["0.1mA以下","1mA以下","10mA以下","30mA以下"], correct:1,
+   memo:"測れない時は「漏れ1mA」"},
+  {c:"計器", q:"<b>回路計（テスタ）</b>で抵抗を測る前の調整方法は？", a:'赤黒のテストリードを<span class="em">短絡して0Ω調整</span>',
+   choices:["リードを開放して0Ω調整","リードを短絡して0Ω調整","電源を入れて調整","調整は不要"], correct:1,
+   memo:"抵抗レンジは「くっつけて0」"},
+  {c:"計器", q:"アナログ<b>絶縁抵抗計</b>の目盛。左端と右端は？", a:'左端が <span class="em">∞（良好）</span>・右端が <span class="em">0（絶縁不良）</span>',
+   choices:["左が0、右が∞","左が∞、右が0","両端とも0","目盛に向きはない"], correct:1,
+   memo:"テスタと逆向き。∞が左"},
+  {c:"計器", q:"<b>絶縁抵抗</b>を測るときの電路の状態は？", a:'必ず<span class="em">電源を切った（無電圧）</span>状態で測る',
+   choices:["通電したまま測る","無電圧にして測る","負荷だけ入れて測る","どちらでもよい"], correct:1,
+   memo:"絶縁は停電させてから"},
+  {c:"計器", q:"接地抵抗計の補助接地極 <b>P・C</b> の間隔は？", a:'E→P→C を<span class="em">一直線に約10m（5〜10m）間隔</span>で配置',
+   choices:["約1m間隔","約10m間隔","約30m間隔","間隔は自由"], correct:1,
+   memo:"まっすぐ10mずつ"},
+  {c:"計器", q:"<b>竣工検査</b>の正しい順序は？", a:'<span class="em">目視点検 → 絶縁抵抗測定 → 接地抵抗測定 → 導通・通電試験</span>',
+   choices:["通電試験→目視→絶縁→接地","目視→絶縁→接地→通電","絶縁→目視→通電→接地","接地→通電→目視→絶縁"], correct:1,
+   memo:"見て・絶縁・接地・最後に電気を入れる"},
+  {c:"計器", q:"<b>低圧検電器</b>は何を確かめる道具？", a:'電路が<span class="em">充電中（電気がきている）</span>かどうかの確認',
+   choices:["絶縁抵抗の値","接地抵抗の値","充電の有無","電力量"], correct:2,
+   memo:"通電チェック専用"},
+
+  // ---- 配線（分岐回路・小勢力・接地の省略） ----
+  {c:"配線", q:"<b>15A</b>分岐回路。電線の太さとコンセント容量は？", a:'電線 <span class="em">1.6mm以上</span>／コンセント <span class="em">15A以下</span>',
+   choices:["1.6mm以上・15A以下","2.0mm以上・20A以下","2.6mm以上・30A以下","1.6mm以上・30A以下"], correct:0,
+   memo:"15A回路には15Aまで"},
+  {c:"配線", q:"分岐回路で<b>不適切</b>な組合せはどれ？", a:'<span class="em">30A遮断器に1.6mmや2.0mmの細い電線</span>はNG',
+   choices:["15A遮断器＋1.6mm＋15Aコンセント","20A遮断器＋2.0mm＋20Aコンセント","30A遮断器＋2.0mm＋30Aコンセント","30A遮断器＋2.6mm＋30Aコンセント"], correct:2,
+   memo:"30Aには2.6mm（5.5mm²）以上"},
+  {c:"配線", q:"<b>20A</b>分岐回路に接続してよいコンセントは？", a:'<span class="em">15A または 20A</span>（遮断器より大きい容量はNG）',
+   choices:["15Aまたは20A","20Aまたは30A","30Aのみ","容量は自由"], correct:0,
+   memo:"コンセントは遮断器以下"},
+  {c:"配線", q:"<b>小勢力回路</b>（チャイム・警報ベル）の最大使用電圧は？", a:'<span class="em">60V以下</span>',
+   choices:["30V以下","60V以下","100V以下","150V以下"], correct:1,
+   memo:"小勢力＝60V"},
+  {c:"配線", q:"<b>小勢力回路</b>に使う軟銅線の最小の太さは？", a:'直径 <span class="em">0.8mm以上</span>',
+   choices:["0.5mm以上","0.8mm以上","1.6mm以上","2.0mm以上"], correct:1,
+   memo:"60Vと0.8mmはセットで暗記"},
+  {c:"配線", q:"<b>D種接地を省略できる</b>のはどんなとき？", a:'対地電圧<span class="em">150V以下</span>の機器を<span class="em">乾燥した場所</span>に施設するとき',
+   choices:["湿気の多い場所に施設するとき","対地電圧150V以下＋乾燥した場所","屋外に施設するとき","水気のある場所に施設するとき"], correct:1,
+   memo:"「150V以下＋乾燥」で省略OK"},
+  {c:"配線", q:"D種接地の省略。乾燥した場所の<b>金属管</b>は何m以下なら省略できる？", a:'<span class="em">4m以下</span>',
+   choices:["2m以下","4m以下","8m以下","10m以下"], correct:1,
+   memo:"短い管（4m）は省略できる"},
+  {c:"配線", q:"接地を省略できる<b>器具の構造</b>は？", a:'<span class="em">二重絶縁構造</span>（回マーク付き）の機器',
+   choices:["金属ケースの機器","二重絶縁構造（回マーク）の機器","屋外用の機器","防雨形の機器"], correct:1,
+   memo:"回マーク＝アース不要"},
+  {c:"配線", q:"金属管に<b>交流回路</b>を収めるときの鉄則は？", a:'行き帰りの電線を<span class="em">同一の管に一括して</span>収める（電磁的不平衡の防止）',
+   choices:["1本ずつ別々の管に入れる","往復の電線を同一管に収める","中性線だけ別の管にする","管の外に沿わせる"], correct:1,
+   memo:"バラすと管が発熱する"},
+
+  // ---- 施工 ----
+  {c:"施工", q:"<b>合成樹脂管（VE・PF）</b>の支持点間隔は？", a:'<span class="em">1.5m以下</span>',
+   choices:["1m以下","1.5m以下","2m以下","3m以下"], correct:1,
+   memo:"樹脂はやわらかい→1.5m"},
+  {c:"施工", q:"<b>金属管工事</b>の支持点間隔は？", a:'<span class="em">2m以下</span>',
+   choices:["1m以下","1.5m以下","2m以下","2.5m以下"], correct:2,
+   memo:"金属はじょうぶ→2m"},
+  {c:"施工", q:"<b>ケーブル工事（VVF等）</b>の支持点間隔は？", a:'<span class="em">2m以下</span>（2種キャブタイヤは1.5m以下）',
+   choices:["1m以下","1.5m以下","2m以下","3m以下"], correct:2,
+   memo:"金属管と同じ2m"},
+  {c:"施工", q:"<b>金属可とう電線管（プリカ）</b>の支持点間隔は？", a:'<span class="em">1m以下</span>',
+   choices:["1m以下","1.5m以下","2m以下","3m以下"], correct:0,
+   memo:"くねくね曲がる→いちばん短い1m"},
+  {c:"施工", q:"<b>ライティングダクト</b>の支持点間隔は？", a:'原則 <span class="em">2m以下</span>',
+   choices:["1m以下","1.5m以下","2m以下","3m以下"], correct:2,
+   memo:"問題文によっては1.5mが「適切」とされることも"},
+  {c:"施工", q:"電線管を曲げるとき、内側の<b>曲げ半径</b>は？", a:'管の<span class="em">内径の6倍以上</span>',
+   choices:["内径の3倍以上","内径の6倍以上","外径の6倍以上","外径の10倍以上"], correct:1,
+   memo:"「内径の6倍」。つぶれ防止"},
+  {c:"施工", q:"VE管をカップリングへ差し込む深さ。<b>接着剤を使う</b>場合は？", a:'<span class="em">外径の0.8倍以上</span>',
+   choices:["内径の0.8倍以上","外径の0.8倍以上","外径の1.2倍以上","外径の2倍以上"], correct:1,
+   memo:"接着剤あり＝浅くてOK（0.8）"},
+  {c:"施工", q:"VE管の差込み深さ。<b>接着剤を使わない</b>場合は？", a:'<span class="em">外径の1.2倍以上</span>',
+   choices:["外径の0.8倍以上","外径の1.2倍以上","内径の1.2倍以上","内径の6倍以上"], correct:1,
+   memo:"のり無しは深く（1.2）。基準は必ず「外径」"},
+  {c:"施工", q:"オレンジ色の<b>CD管</b>が使えるのはどこ？", a:'<span class="em">コンクリート埋設専用</span>（自己消火性がないため露出・隠ぺいはNG）',
+   choices:["露出配管","天井裏の隠ぺい配管","コンクリート埋設","屋外の露出"], correct:2,
+   memo:"オレンジ＝コンクリートの中だけ"},
+  {c:"施工", q:"<b>PF管</b>の特徴は？", a:'<span class="em">自己消火性がある</span>ので露出・隠ぺいどちらにも使える',
+   choices:["自己消火性がなく埋設専用","自己消火性があり露出も隠ぺいも可","地中埋設専用","屋内では使えない"], correct:1,
+   memo:"PFは自己消火性あり＝どこでもOK"},
+  {c:"施工", q:"<b>FEP</b>（波付硬質合成樹脂管）はどこに使う？", a:'<span class="em">地中埋設</span>用',
+   choices:["天井の露出配管","地中埋設","コンクリート埋設専用","屋内の湿気の多い場所"], correct:1,
+   memo:"波々のFEPは地中"},
+  {c:"施工", q:"<b>ライティングダクト</b>の取付け向きと端末処理は？", a:'開口部は<span class="em">下向き</span>／終端は<span class="em">エンドキャップ</span>で閉そく',
+   choices:["上向き・開放のまま","下向き・エンドキャップで閉そく","横向き・テープ巻き","向きは自由"], correct:1,
+   memo:"ほこり・水が入らないよう下向き"},
+  {c:"施工", q:"ライティングダクトで<b>禁止</b>されている施工は？", a:'ダクトを<span class="em">壁や造営材を貫通させて</span>施設すること',
+   choices:["支持点を2m以下にする","壁を貫通して施設する","終端をエンドキャップで閉じる","開口部を下向きにする"], correct:1,
+   memo:"貫通はNG"},
+  {c:"施工", q:"金属管どうしをつなぐ材料（ねじを切らないE管）は？", a:'<span class="em">ねじなしカップリング</span>',
+   choices:["コンビネーションカップリング","ねじなしカップリング","ノーマルベンド","エントランスキャップ"], correct:1,
+   memo:"同じ種類の管どうし＝ふつうのカップリング"},
+  {c:"施工", q:"<b>金属管と合成樹脂管</b>など、種類の違う管をつなぐ材料は？", a:'<span class="em">コンビネーションカップリング</span>',
+   choices:["ねじなしカップリング","コンビネーションカップリング","ユニオンカップリング","絶縁ブッシング"], correct:1,
+   memo:"異種管＝コンビネーション"},
+  {c:"施工", q:"金属管の管端に付けて<b>電線の被覆を保護</b>するものは？", a:'<span class="em">絶縁ブッシング</span>',
+   choices:["ロックナット","絶縁ブッシング","エントランスキャップ","サドル"], correct:1,
+   memo:"切り口で被覆を傷つけない"},
+  {c:"施工", q:"<b>HIVE管</b>の特徴は？", a:'<span class="em">耐衝撃性</span>にすぐれた硬質塩化ビニル電線管',
+   choices:["耐熱性が高い","耐衝撃性が高い","地中埋設専用","自己消火性がない"], correct:1,
+   memo:"HI＝ハイインパクト（衝撃に強い）"},
+
+  // ---- 鑑別（図記号・器具） ----
+  {c:"鑑別", q:"点滅器の傍記 <b>H</b>（●H）は何？", a:'<span class="em">位置表示灯内蔵</span>スイッチ。「切」のとき<span class="em">緑</span>に点灯',
+   choices:["確認表示灯内蔵（入で赤）","位置表示灯内蔵（切で緑）","調光器","タイマ付"], correct:1,
+   memo:"H＝ほたる。暗闇で場所がわかる"},
+  {c:"鑑別", q:"点滅器の傍記 <b>L</b>（●L）は何？", a:'<span class="em">確認表示灯内蔵</span>スイッチ。「入」のとき<span class="em">赤</span>に点灯',
+   choices:["位置表示灯内蔵（切で緑）","確認表示灯内蔵（入で赤）","自動点滅器","リモコンスイッチ"], correct:1,
+   memo:"L＝ランプ確認。換気扇の消し忘れ防止"},
+  {c:"鑑別", q:"<b>3路スイッチ</b>の端子数は？", a:'<span class="em">3端子（0・1・3）</span>。0が共通端子',
+   choices:["2端子","3端子","4端子","5端子"], correct:1,
+   memo:"3路は3端子。階段の2か所点滅"},
+  {c:"鑑別", q:"<b>4路スイッチ</b>の端子数と使い方は？", a:'<span class="em">4端子</span>。3か所以上で点滅させるとき<span class="em">3路と3路の間</span>に入れる',
+   choices:["3端子・端に置く","4端子・3路の間に入れる","2端子・単独で使う","4端子・単独で使う"], correct:1,
+   memo:"4路は必ず3路にはさまれる"},
+  {c:"鑑別", q:"<b>3路スイッチ同士</b>をつなぐ渡り線は最少何本？", a:'最少 <span class="em">3本</span>',
+   choices:["1本","2本","3本","4本"], correct:2,
+   memo:"3路＝3本"},
+  {c:"鑑別", q:"<b>リモコンスイッチ（●R）</b>へ向かう電線は最少何本？", a:'最少 <span class="em">2本</span>（低電圧24Vのリモコン回路）',
+   choices:["1本","2本","3本","4本"], correct:1,
+   memo:"リモコンは2本でOK"},
+  {c:"鑑別", q:"傍記 <b>P</b>（●P）のスイッチは？", a:'<span class="em">プルスイッチ</span>（ひもを引いて入切）',
+   choices:["プルスイッチ","パイロットランプ","押しボタン","防雨形スイッチ"], correct:0,
+   memo:"P＝プル（引く）"},
+  {c:"鑑別", q:"コンセントの傍記 <b>WP</b> は？", a:'<span class="em">防雨形</span>（屋外・雨線外で使う）',
+   choices:["抜け止め形","防雨形","引掛形","接地極付"], correct:1,
+   memo:"WP＝ウォータープルーフ"},
+  {c:"鑑別", q:"コンセントの傍記 <b>LK</b> は？", a:'<span class="em">抜け止め形</span>（差し込んで回すとロック）',
+   choices:["引掛形","防雨形","抜け止め形","接地端子付"], correct:2,
+   memo:"LK＝ロック"},
+  {c:"鑑別", q:"コンセントの傍記 <b>T</b> は？", a:'<span class="em">引掛形</span>（ツイストして抜け落ち防止・刃受が円弧状）',
+   choices:["引掛形","抜け止め形","接地極付","防雨形"], correct:0,
+   memo:"T＝ツイスト"},
+  {c:"鑑別", q:"傍記 <b>E</b>・<b>ET</b>・<b>EET</b> の違いは？", a:'E＝<span class="em">接地極付</span>／ET＝<span class="em">接地端子付</span>／EET＝接地極付接地端子付',
+   choices:["E＝接地端子付、ET＝接地極付","E＝接地極付、ET＝接地端子付","どちらも同じ意味","E＝防雨形、ET＝引掛形"], correct:1,
+   memo:"Tが付くと「端子（ネジ）」"},
+  {c:"鑑別", q:"コンセントの図記号で<b>傍記が省略</b>されるのは何A？", a:'<span class="em">15A</span>（15A125Vは傍記しない）',
+   choices:["15A","20A","30A","すべて傍記する"], correct:0,
+   memo:"いちばん普通の15Aは書かない"},
+  {c:"鑑別", q:"<b>100V 20A</b>コンセントの刃受の形は？", a:'片側の刃受が <span class="em">L字（90度曲がった形）</span>',
+   choices:["両方まっすぐ縦","片側がL字","両方横向き","丸い穴"], correct:1,
+   memo:"20Aは片方だけカギ形"},
+  {c:"鑑別", q:"<b>200V 20A</b>コンセントの刃受の形は？", a:'刃受が <span class="em">横向き（一の字）</span>で接地極付',
+   choices:["両方縦向き","片側L字","横向き（一の字）","円弧状"], correct:2,
+   memo:"200Vは寝ている（横）"},
+  {c:"鑑別", q:"図記号 <b>B</b> の器具は？", a:'<span class="em">配線用遮断器</span>（短絡・過負荷の過電流から電線を守る）',
+   choices:["漏電遮断器","配線用遮断器","電磁開閉器","カットアウトスイッチ"], correct:1,
+   memo:"B＝ブレーカ"},
+  {c:"鑑別", q:"図記号 <b>BE</b> の器具は？", a:'<span class="em">過負荷保護付漏電遮断器</span>（過電流＋地絡の両方を遮断）',
+   choices:["配線用遮断器","過負荷保護付漏電遮断器","モーターブレーカ","タイムスイッチ"], correct:1,
+   memo:"E＝アース（漏電）も見る"},
+  {c:"鑑別", q:"モーターブレーカ（電動機用遮断器）の役目は？", a:'電動機の<span class="em">始動電流</span>で誤って切れないようにする',
+   choices:["漏電だけを検出する","始動電流での誤動作を防ぐ","電圧を下げる","力率を改善する"], correct:1,
+   memo:"モーターは動き出しに大電流"},
+  {c:"鑑別", q:"<b>VE管</b>（硬質ビニル電線管）の特徴は？", a:'<span class="em">腐食に強い</span>。曲げるにはトーチランプで加熱する',
+   choices:["腐食に強い","衝撃に強い","地中埋設専用","自己消火性がない"], correct:0,
+   memo:"サビない。熱で曲げる"},
+
+  // ---- 工具 ----
+  {c:"工具", q:"<b>パイプベンダ</b>は何に使う？", a:'<span class="em">金属管を曲げる</span>',
+   choices:["金属管を切る","金属管を曲げる","管のバリを取る","ボックスに穴をあける"], correct:1,
+   memo:"ベンド＝曲げる"},
+  {c:"工具", q:"<b>リーマ</b>は何に使う？（組合せも）", a:'金属管を切った後の<span class="em">バリ取り</span>。<span class="em">クリックボール</span>に付けて使う',
+   choices:["管を曲げる","切り口のバリ取り（クリックボールと組合せ）","電線を圧着する","電動で穴をあける"], correct:1,
+   memo:"リーマ＋クリックボールはセット"},
+  {c:"工具", q:"<b>ノックアウトパンチャ</b>は何に使う？", a:'金属製ボックス・分電盤に<span class="em">穴をあける</span>',
+   choices:["管を曲げる","ボックスに穴をあける","電線を切る","ねじを切る"], correct:1,
+   memo:"打ち抜いて穴を作る"},
+  {c:"工具", q:"<b>トーチランプ</b>は何に使う？", a:'<span class="em">合成樹脂管（VE管）を加熱して曲げる</span>',
+   choices:["金属管を曲げる","合成樹脂管を加熱加工する","はんだ付け専用","塗装の乾燥"], correct:1,
+   memo:"樹脂は「あぶって曲げる」"},
+  {c:"工具", q:"圧着工具の<b>黄色</b>のハンドルは何用？", a:'<span class="em">リングスリーブ用</span>（JIS刻印が残る）',
+   choices:["絶縁被覆付圧着端子用","リングスリーブ用","裸圧着端子用","どちらでも使える"], correct:1,
+   memo:"黄＝リングスリーブ"},
+  {c:"工具", q:"圧着工具の<b>赤色</b>のハンドルは何用？", a:'<span class="em">絶縁被覆付圧着端子用</span>（リングスリーブ用とは別物）',
+   choices:["リングスリーブ用","絶縁被覆付圧着端子用","ボルト切断用","管の切断用"], correct:1,
+   memo:"赤＝絶縁被覆付端子。取り違え注意"},
+  {c:"工具", q:"<b>羽根ぎり</b>は何に使う？", a:'<span class="em">木材に穴をあける</span>。クリックボールに取り付ける',
+   choices:["金属に穴をあける","木材に穴をあける","管を切る","電線をむく"], correct:1,
+   memo:"木＝羽根ぎり"},
+  {c:"工具", q:"<b>ボルトクリッパ</b>と<b>ケーブルカッタ</b>の違いは？", a:'ボルトクリッパ＝<span class="em">太いボルト等の切断</span>／ケーブルカッタ＝<span class="em">ケーブルの切断</span>',
+   choices:["どちらもケーブル用","ボルトクリッパは硬い金属、ケーブルカッタはケーブル","どちらもボルト用","違いはない"], correct:1,
+   memo:"名前どおりの用途。写真鑑別で頻出"},
+  {c:"工具", q:"金属管に<b>ねじを切る</b>工具は？", a:'<span class="em">リード形ねじ切り器（オスタ形）</span>',
+   choices:["パイプベンダ","リード形ねじ切り器","ノックアウトパンチャ","クリックボール"], correct:1,
+   memo:"ねじ切り＝オスタ"},
+  {c:"工具", q:"<b>張線器（シメラー）</b>は何に使う？", a:'架空電線などを<span class="em">引っ張ってたるみを取る</span>',
+   choices:["電線を切る","電線を張る（たるみ取り）","管を曲げる","穴をあける"], correct:1,
+   memo:"シメラー＝しめる"},
 ];
 
 /* ============ 状態 ============ */
@@ -334,7 +628,7 @@ let store = JSON.parse(localStorage.getItem(KEY) || '{"mastered":[],"weak":[]}')
 function save(){ localStorage.setItem(KEY, JSON.stringify(store)); }
 function idOf(item){ return item.c + "|" + item.q; }
 let curCat = "all";
-const CAT_COLOR = {法令:"var(--c1)",計器:"var(--c2)",配線:"var(--c3)",計算:"var(--c4)"};
+const CAT_COLOR = {法令:"var(--c1)",計器:"var(--c2)",配線:"var(--c3)",計算:"var(--c4)",鑑別:"var(--c5)",施工:"var(--c6)",工具:"var(--c7)"};
 
 /* ============ ホーム描画 ============ */
 function renderHome(){
@@ -367,7 +661,7 @@ function poolByCat(){
   return curCat==="all" ? DATA.slice() : DATA.filter(d=>d.c===curCat);
 }
 function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];} return a; }
-function show(id){ ['home','cards','quiz','result'].forEach(s=>document.getElementById(s).classList.toggle('hide', s!==id)); window.scrollTo(0,0); }
+function show(id){ ['home','cards','quiz','result','print'].forEach(s=>document.getElementById(s).classList.toggle('hide', s!==id)); window.scrollTo(0,0); }
 function goHome(){ renderHome(); show('home'); }
 
 /* ============ カードモード ============ */
@@ -489,6 +783,79 @@ function resetAll(){
     store={mastered:[],weak:[]}; save(); renderHome();
   }
 }
+
+/* ============ 印刷モード ============ */
+const CAT_ORDER = ["法令","計器","配線","計算","鑑別","施工","工具"];
+let pMode = "ans";
+function openPrint(){ show('print'); renderSheet(); }
+function setPMode(m){
+  pMode = m;
+  document.getElementById('pmA').classList.toggle('on', m==="ans");
+  document.getElementById('pmB').classList.toggle('on', m==="blank");
+  renderSheet();
+}
+/* 覚えるところ（<span class="em">）を下線の空欄にする */
+function blankify(html){
+  return html.replace(/<span class="em">([\s\S]*?)<\/span>/g, function(_, inner){
+    const plain = inner.replace(/<[^>]+>/g, "");
+    const w = Math.min(Math.max(plain.length, 4), 18);
+    return '<span class="bl" style="min-width:' + (w * 0.95) + 'em"></span>';
+  });
+}
+function renderSheet(){
+  const weakOnly = document.getElementById('pWeak').checked;
+  let list = poolByCat();
+  if(weakOnly) list = list.filter(d => store.weak.includes(idOf(d)));
+  const isBlank = (pMode === "blank");
+  const hideMemo = isBlank && document.getElementById('pHint').checked;
+  document.getElementById('pHintWrap').style.opacity = isBlank ? "1" : ".4";
+  const catName = (curCat === "all") ? "全分野" : curCat;
+  const modeName = isBlank ? "勉強用（空欄）" : "暗記用（答えあり）";
+
+  let html = '<div class="sheetHead">'
+    + '<h3>⚡ 電工暗記ドリル｜第二種電気工事士 筆記　<span style="font-weight:400">' + modeName + '</span></h3>'
+    + '<div class="meta"><span>分野：' + catName + (weakOnly ? '（苦手だけ）' : '') + '　全' + list.length + '問</span>'
+    + '<span>名前 ____________　日付 ____ / ____</span></div></div>';
+
+  if(!list.length){
+    html += '<p style="font-size:12px;color:#8a949e">この条件の問題がありません。分野や「苦手だけ」の設定を見なおしてください。</p>';
+    document.getElementById('sheet').innerHTML = html;
+    return;
+  }
+
+  let n = 0;
+  CAT_ORDER.forEach(cat => {
+    const items = list.filter(d => d.c === cat);
+    if(!items.length) return;
+    html += '<div class="pcat" style="border-left-color:' + (CAT_COLOR[cat] || "#999") + '">' + cat + '（' + items.length + '問）</div>';
+    items.forEach(it => {
+      n++;
+      const ans = isBlank ? blankify(it.a) : it.a;
+      html += '<div class="pitem">'
+        + '<div class="pq"><i>Q' + n + '.</i>' + it.q + '</div>'
+        + '<div class="pa">' + ans + '</div>'
+        + ((it.memo && !hideMemo) ? '<div class="pm2">💡 ' + it.memo + '</div>' : '')
+        + '</div>';
+    });
+  });
+  document.getElementById('sheet').innerHTML = html;
+}
+/* どの画面から Ctrl+P しても印刷シートが出るように */
+window.addEventListener('beforeprint', function(){
+  if(document.getElementById('print').classList.contains('hide')) openPrint();
+});
+
+/* ?print=ans / ?print=blank で印刷シートを直接ひらく（&cat=鑑別 で分野指定も可） */
+(function(){
+  const q = new URLSearchParams(location.search);
+  const m = q.get('print');
+  if(!m) return;
+  const c = q.get('cat'); if(c) curCat = c;
+  if(q.get('hint')==='off') { const h=document.getElementById('pHint'); if(h) h.checked = true; }
+  pMode = (m === 'blank') ? 'blank' : 'ans';
+  setPMode(pMode);
+  openPrint();
+})();
 
 renderHome();
 
